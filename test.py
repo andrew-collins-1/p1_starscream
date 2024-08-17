@@ -19,9 +19,19 @@ sttn_path = repo.working_tree_dir + '\Data\MET Office Station Data.csv'
 df_wthr = pd.read_csv(wthr_path)
 df_wthr.drop(columns=['af'])
 df_wthr = df_wthr.rename(columns={"tmax":"temp_max","tmin":"temp_min","sun":"hours_of_sunshine"})
-#print(df_wthr.columns)
+
+df_wthr['year'] = df_wthr['year'].astype('Int64')
 
 df_sttn = pd.read_csv(sttn_path)
+df_sttn = df_sttn[['Station name','Location']]
 
-print(df_wthr['station'].drop_duplicates())
-print(df_sttn['Station name'].drop_duplicates())
+
+df_sttn['Station name'] = df_sttn['Station name'].astype(str)
+df_wthr['station'] = df_wthr['station'].astype(str)
+
+df_sttn['Station name'] = df_sttn['Station name'].str.lower()
+df_wthr['station'] = df_wthr['station'].str.lower()
+
+df_mrgd = pd.merge(df_wthr, df_sttn, left_on=['station'], right_on=['Station name'])
+
+
